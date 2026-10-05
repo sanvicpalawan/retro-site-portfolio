@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# Next.js
+.next/
+out/
+build/
+next-env.d.ts
+
+# Production
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment variables (never commit real credentials)
+.env
+.env*.local
+!.env.example
+
+# Testing / coverage
+coverage/
+
+# Misc
+.DS_Store
+*.tgz
+*.tsbuildinfo
+
+# Drizzle
+drizzle/

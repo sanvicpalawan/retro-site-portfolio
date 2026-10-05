@@ -1,0 +1,951 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --crt-bg: #041007;
+  --crt-screen: #07150a;
+  --crt-panel: #0b1a0d;
+  --crt-frame: #102316;
+  --crt-green: #b7ff8a;
+  --crt-phosphor: #7cff7d;
+  --crt-dim: #86a77a;
+  --crt-line: #315d36;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--crt-bg);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--crt-bg);
+  color: var(--crt-green);
+  font-family: "Courier New", Courier, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+::selection {
+  background: #4eaa53;
+  color: #031005;
+}
+
+.terminal-os {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  padding: clamp(7px, 1.5vw, 20px);
+  overflow: clip;
+  background:
+    radial-gradient(ellipse at 50% 28%, rgba(54, 112, 52, 0.24), transparent 72%),
+    #041007 !important;
+  color: var(--crt-green) !important;
+  font-family: "Courier New", Courier, monospace !important;
+}
+
+.terminal-os::before {
+  position: fixed;
+  z-index: 45;
+  pointer-events: none;
+  content: "";
+  inset: 0;
+  opacity: 0.22;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    rgba(120, 255, 117, 0.12) 3px,
+    transparent 4px
+  );
+}
+
+.terminal-os a,
+.terminal-os h1,
+.terminal-os h2,
+.terminal-os h3,
+.terminal-os p,
+.terminal-os span,
+.terminal-os label,
+.terminal-os button,
+.terminal-os input {
+  font-family: "Courier New", Courier, monospace;
+}
+
+.terminal-os button:focus-visible,
+.terminal-os a:focus-visible,
+.terminal-os input:focus-visible {
+  outline: 2px solid #a8ff8b;
+  outline-offset: 3px;
+}
+
+/* The monitor's dark charcoal casing and display glass */
+.terminal-os > header {
+  position: sticky;
+  top: clamp(7px, 1.5vw, 20px);
+  z-index: 30;
+  max-width: 1440px;
+  margin: 0 auto;
+  color: var(--crt-green) !important;
+  background: linear-gradient(180deg, #18331d 0%, #102316 100%) !important;
+  border: 1px solid #345c39 !important;
+  border-bottom: 1px solid #467947 !important;
+  border-radius: 17px 17px 0 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 5px 14px rgba(0, 0, 0, 0.45);
+  backdrop-filter: none !important;
+}
+
+.terminal-os > header > div {
+  min-height: 72px !important;
+  max-width: none !important;
+  padding: 10px 20px !important;
+}
+
+.terminal-os > header > div > div:first-child > button {
+  border-radius: 5px !important;
+  filter: drop-shadow(0 0 5px rgba(105, 255, 120, 0.17));
+}
+
+.terminal-os > header > div > div:first-child > div > div:first-child {
+  color: #b8ff8d !important;
+  font-family: "Courier New", Courier, monospace !important;
+  font-size: 13px !important;
+  letter-spacing: 0.075em !important;
+  text-transform: uppercase;
+  text-shadow: 0 0 9px rgba(122, 255, 111, 0.34);
+}
+
+.terminal-os > header > div > div:first-child > div > div:nth-child(2) {
+  color: #7f9e79 !important;
+  font-size: 9px !important;
+  letter-spacing: 0.14em !important;
+}
+
+.terminal-os > header nav a {
+  color: #88ad80 !important;
+  font-size: 10px !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.terminal-os > header nav a:hover {
+  color: #c9ffa7 !important;
+  text-shadow: 0 0 8px rgba(134, 255, 121, 0.6);
+}
+
+.terminal-os > header > div > div:last-child {
+  gap: 8px !important;
+}
+
+.terminal-os > header > div > div:last-child > div {
+  min-width: 137px !important;
+  padding: 8px 10px !important;
+  border: 1px solid #315537;
+  border-radius: 4px !important;
+  background: linear-gradient(180deg, #0b150c, #071008) !important;
+  box-shadow: inset 0 0 15px rgba(77, 186, 69, 0.07), 0 1px 0 #252a25;
+}
+
+.terminal-os > header > div > div:last-child > div > div:first-child span:first-child {
+  color: #779972 !important;
+  font-size: 8px !important;
+  letter-spacing: 0.14em !important;
+}
+
+.terminal-os > header > div > div:last-child > div > div:first-child span:last-child {
+  border-radius: 2px !important;
+  background: #102416 !important;
+  color: #8dd982 !important;
+  font-size: 8px !important;
+}
+
+.terminal-os > header > div > div:last-child > div > div:nth-child(2) {
+  color: #b7ff8a !important;
+  font-family: "Courier New", Courier, monospace !important;
+  font-size: 14px !important;
+  letter-spacing: 0.025em !important;
+  text-shadow: 0 0 8px rgba(133, 255, 112, 0.4);
+}
+
+.terminal-os > header > div > div:last-child > div > div:nth-child(3) {
+  color: #789371 !important;
+  font-size: 9px !important;
+}
+
+/* Phosphor display */
+.terminal-os > main {
+  max-width: 1440px !important;
+  margin: 0 auto !important;
+  padding: clamp(20px, 3.3vw, 46px) !important;
+  padding-bottom: 22px !important;
+  color: var(--crt-green) !important;
+  background: radial-gradient(ellipse at 48% 20%, rgba(30, 86, 38, 0.38), transparent 76%), #07150a !important;
+  border-right: 10px solid #102316;
+  border-bottom: 12px solid #102316;
+  border-left: 10px solid #102316;
+  border-radius: 0 0 20px 20px;
+  box-shadow: inset 0 0 0 1px #315d36, inset 0 0 75px rgba(81, 230, 83, 0.055), 0 16px 45px rgba(0, 0, 0, 0.45);
+}
+
+.terminal-os > main > section:first-child {
+  position: relative;
+  min-height: 252px;
+  padding: clamp(23px, 4vw, 46px) !important;
+  overflow: hidden;
+  color: #baff8d !important;
+  background: linear-gradient(120deg, rgba(11, 28, 13, 0.95), rgba(7, 17, 9, 0.98)) !important;
+  border: 1px solid #315a35;
+  border-radius: 4px !important;
+  box-shadow: inset 0 0 36px rgba(77, 225, 76, 0.065), 0 0 18px rgba(77, 225, 76, 0.045) !important;
+}
+
+.terminal-os > main > section:first-child::after {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 7px;
+  height: 7px;
+  content: "";
+  border-radius: 50%;
+  background: #8dff78;
+  box-shadow: 0 0 7px #76ff69, 0 0 15px rgba(118, 255, 105, 0.65);
+}
+
+.terminal-os > main > section:first-child > div:first-child {
+  display: none;
+}
+
+.terminal-os > main > section:first-child > div:nth-child(2) {
+  position: relative;
+  z-index: 1;
+  max-width: 720px !important;
+}
+
+.terminal-os > main > section:first-child > div:nth-child(2) > div:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 9px !important;
+  color: #9ee98a !important;
+  background: #0a180b !important;
+  border: 1px solid #3b6940 !important;
+  border-radius: 2px !important;
+  box-shadow: none !important;
+  font-family: "Courier New", Courier, monospace !important;
+  font-size: 9px !important;
+  letter-spacing: 0.15em !important;
+}
+
+.terminal-os > main > section:first-child h1 {
+  margin-top: 24px !important;
+  color: #c3ff98 !important;
+  font-family: "Courier New", Courier, monospace !important;
+  font-size: clamp(26px, 4.3vw, 51px) !important;
+  font-weight: 700 !important;
+  line-height: 1.17 !important;
+  letter-spacing: -0.045em !important;
+  text-transform: uppercase;
+  text-shadow: 0 0 15px rgba(135, 255, 112, 0.24);
+}
+
+.terminal-os > main > section:first-child h1 span {
+  color: #84df79 !important;
+}
+
+.terminal-os > main > section:first-child p {
+  max-width: 520px !important;
+  color: #8bae7f !important;
+  font-size: 12px !important;
+  line-height: 1.85 !important;
+}
+
+.terminal-os > main > section:first-child > div:nth-child(3) {
+  position: relative;
+  z-index: 1;
+  margin-top: 23px !important;
+  border-top: 1px solid rgba(102, 167, 87, 0.24) !important;
+  color: #9ac38c !important;
+}
+
+.terminal-os > main > section:first-child > div:nth-child(3) > div:first-child > span:first-child {
+  border-radius: 2px !important;
+  background: #102012 !important;
+  color: #9eff82 !important;
+}
+
+.terminal-os > main > section:first-child > div:nth-child(3) > div:first-child > div > div:first-child {
+  color: #c2ff92 !important;
+  font-family: "Courier New", Courier, monospace !important;
+  text-shadow: 0 0 9px rgba(133, 255, 112, 0.3);
+}
+
+.terminal-os > main > section:first-child > div:nth-child(3) > div:first-child > div > div:nth-child(2),
+.terminal-os > main > section:first-child > div:nth-child(3) > div:last-child {
+  color: #86a77a !important;
+  font-size: 9px !important;
+  letter-spacing: 0.1em;
+}
+
+/* Link directory */
+.terminal-os #collection {
+  scroll-margin-top: 110px;
+  padding-top: clamp(30px, 4.5vw, 54px) !important;
+}
+
+.terminal-os #collection > div:first-child > div:first-child > div:first-child {
+  color: #83ac79 !important;
+  font-size: 9px !important;
+  letter-spacing: 0.2em !important;
+}
+
+.terminal-os #collection > div:first-child > div:first-child > div:first-child span {
+  background: #52734b !important;
+}
+
+.terminal-os #collection h2 {
+  color: #bdff91 !important;
+  font-family: "Courier New", Courier, monospace !important;
+  font-size: clamp(21px, 2.3vw, 28px) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.045em !important;
+  text-transform: uppercase;
+}
+
+.terminal-os #collection > div:first-child > div:first-child > div:nth-child(2) span {
+  color: #799673 !important;
+  font-size: 10px !important;
+}
+
+.terminal-os #collection > div:first-child > div:first-child > p {
+  color: #819779 !important;
+  font-size: 11px !important;
+}
+
+.terminal-os #collection label > span:first-of-type {
+  color: #88a680 !important;
+}
+
+.terminal-os #collection input[type="search"] {
+  height: 42px !important;
+  color: #c1ff9a !important;
+  background: #071008 !important;
+  border: 1px solid #315537;
+  border-radius: 3px !important;
+  box-shadow: inset 0 0 12px rgba(90, 183, 78, 0.055) !important;
+  font-size: 11px !important;
+}
+
+.terminal-os #collection input[type="search"]::placeholder {
+  color: #688063 !important;
+}
+
+.terminal-os #collection input[type="search"] + span,
+.terminal-os #collection label > span:nth-child(2) {
+  color: #7da276 !important;
+}
+
+.terminal-os #collection button {
+  color: #a9ed8b !important;
+  background: #0c1c0e !important;
+  border: 1px solid #37633b;
+  border-radius: 3px !important;
+  box-shadow: inset 0 1px 0 rgba(171, 255, 142, 0.06) !important;
+  font-family: "Courier New", Courier, monospace !important;
+  letter-spacing: 0.02em;
+}
+
+.terminal-os #collection button:hover {
+  color: #d4ffae !important;
+  background: #112615 !important;
+  border-color: #73a85b;
+  box-shadow: 0 0 12px rgba(106, 235, 91, 0.14), inset 0 1px 0 rgba(171, 255, 142, 0.1) !important;
+}
+
+.terminal-os #collection button:disabled {
+  opacity: 0.5;
+}
+
+.terminal-os #collection > div:last-child:has(> article) {
+  background: transparent !important;
+}
+
+.terminal-os #collection article {
+  min-height: 158px;
+  padding: 18px !important;
+  color: #b5f891 !important;
+  background: linear-gradient(145deg, #0c170d, #09120a) !important;
+  border: 1px solid #2e5232 !important;
+  border-radius: 4px !important;
+  box-shadow: inset 0 0 18px rgba(87, 207, 74, 0.035), 0 3px 7px rgba(0, 0, 0, 0.22) !important;
+}
+
+.terminal-os #collection article:hover {
+  border-color: #73a85b !important;
+  box-shadow: inset 0 0 22px rgba(87, 207, 74, 0.08), 0 0 16px rgba(87, 207, 74, 0.1) !important;
+}
+
+.terminal-os #collection article > a > span:first-child {
+  width: 42px !important;
+  height: 42px !important;
+  color: #adff8b !important;
+  background: #102112 !important;
+  border: 1px solid #3f6b41;
+  border-radius: 3px !important;
+  font-family: "Courier New", Courier, monospace !important;
+  text-shadow: 0 0 8px rgba(133, 255, 112, 0.3);
+}
+
+.terminal-os #collection article > a > span:nth-child(2) > span:first-child {
+  color: #c3ff98 !important;
+  font-size: 13px !important;
+  letter-spacing: 0.025em !important;
+  text-transform: uppercase;
+}
+
+.terminal-os #collection article > a > span:nth-child(2) > span:nth-child(2) {
+  color: #789574 !important;
+  font-size: 10px !important;
+}
+
+.terminal-os #collection article > a > span:nth-child(2) > span:nth-child(3) {
+  color: #8fdb78 !important;
+  font-size: 9px !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.terminal-os #collection article > div {
+  border-color: #233d27 !important;
+}
+
+.terminal-os #collection article > div button {
+  border-color: transparent;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #8bb57e !important;
+}
+
+.terminal-os #collection article > div button:last-child {
+  color: #c68776 !important;
+}
+
+.terminal-os #collection article > div button:last-child:hover {
+  color: #ffc0a8 !important;
+  background: #2b1410 !important;
+  border-color: #76433a;
+}
+
+.terminal-os #collection > div:last-child:not(:has(> article)) {
+  padding: 42px 20px !important;
+  color: #a9ec8a !important;
+  background: #09130b !important;
+  border: 1px solid #2c4c30 !important;
+  border-radius: 4px !important;
+  box-shadow: inset 0 0 28px rgba(87, 207, 74, 0.045) !important;
+}
+
+.terminal-os #collection > div:last-child:not(:has(> article)) > div:first-child {
+  color: #a7ff86 !important;
+  background: #112315 !important;
+  border: 1px solid #3b6840;
+  border-radius: 3px !important;
+}
+
+.terminal-os #collection > div:last-child:not(:has(> article)) h3 {
+  color: #bbff91 !important;
+  font-size: 15px !important;
+  letter-spacing: 0.025em !important;
+  text-transform: uppercase;
+}
+
+.terminal-os #collection > div:last-child:not(:has(> article)) p {
+  color: #809879 !important;
+  font-size: 11px !important;
+}
+
+.terminal-os #about {
+  border-color: #253e28 !important;
+  color: #71886b !important;
+  font-size: 9px !important;
+}
+
+.terminal-os #about p:last-child {
+  color: #8bab7e !important;
+  font-size: 9px !important;
+}
+
+.terminal-os .terminal-gallery {
+  color: #b7ff8a;
+  box-shadow: inset 0 0 24px rgba(87, 207, 74, 0.045);
+}
+
+.terminal-os .terminal-gallery h2 {
+  color: #bdff91 !important;
+  font-size: 20px !important;
+  letter-spacing: -0.035em !important;
+}
+
+.terminal-os .terminal-gallery p {
+  color: #819779 !important;
+  font-size: 10px !important;
+}
+
+.terminal-os .terminal-gallery input {
+  font-family: "Courier New", Courier, monospace;
+}
+
+.terminal-os .terminal-gallery figure img {
+  background: #071008;
+}
+
+.terminal-os .terminal-gallery figcaption {
+  color: #88a77e !important;
+  font-size: 9px !important;
+}
+
+.terminal-os .terminal-gallery button {
+  border-radius: 2px;
+  font-family: "Courier New", Courier, monospace;
+  letter-spacing: 0.035em;
+}
+
+.terminal-os .terminal-gallery button:hover:not(:disabled) {
+  border-color: #78a965;
+  filter: brightness(1.2);
+}
+
+/* Terminal-style dialogs and controls */
+.terminal-os > div.fixed.inset-0 {
+  background: rgba(0, 0, 0, 0.82) !important;
+  backdrop-filter: blur(2px) grayscale(0.4) !important;
+}
+
+.terminal-os section[role="dialog"] {
+  padding: 26px !important;
+  color: #b7ff8a !important;
+  background: linear-gradient(145deg, #101810, #09120a) !important;
+  border: 1px solid #49744a;
+  border-radius: 4px !important;
+  box-shadow: 0 0 0 7px #171b18, 0 24px 70px rgba(0, 0, 0, 0.75), inset 0 0 30px rgba(88, 213, 72, 0.055) !important;
+}
+
+.terminal-os section[role="dialog"] h2 {
+  color: #c1ff95 !important;
+  font-family: "Courier New", Courier, monospace !important;
+  font-size: 20px !important;
+  letter-spacing: 0.015em !important;
+  text-transform: uppercase;
+}
+
+.terminal-os section[role="dialog"] p {
+  color: #88a57e !important;
+  font-size: 11px !important;
+}
+
+.terminal-os section[role="dialog"] p:first-child,
+.terminal-os section[role="dialog"] > p:first-of-type {
+  color: #9bc28d !important;
+  letter-spacing: 0.12em;
+}
+
+.terminal-os section[role="dialog"] label,
+.terminal-os section[role="dialog"] label span {
+  color: #a2c493 !important;
+  font-size: 10px !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.terminal-os section[role="dialog"] input {
+  height: 44px !important;
+  color: #c4ff9b !important;
+  background: #040a05 !important;
+  border: 1px solid #385d39 !important;
+  border-radius: 3px !important;
+  box-shadow: inset 0 0 13px rgba(92, 208, 77, 0.06) !important;
+  font-size: 12px !important;
+}
+
+.terminal-os section[role="dialog"] input::placeholder,
+.terminal-os section[role="dialog"] textarea::placeholder {
+  color: #5f7959 !important;
+}
+
+.terminal-os section[role="dialog"] textarea {
+  width: 100%;
+  color: #c4ff9b !important;
+  background: #040a05 !important;
+  border: 1px solid #385d39 !important;
+  border-radius: 3px !important;
+  box-shadow: inset 0 0 13px rgba(92, 208, 77, 0.06) !important;
+  font-size: 12px !important;
+  resize: vertical;
+}
+
+.terminal-os section[role="dialog"] button {
+  min-height: 38px;
+  color: #a7dc8b !important;
+  background: #101b11 !important;
+  border: 1px solid #3c5d3d;
+  border-radius: 3px !important;
+  box-shadow: none !important;
+  font-size: 10px !important;
+  text-transform: uppercase;
+}
+
+.terminal-os section[role="dialog"] button:hover {
+  color: #d5ffae !important;
+  background: #17261a !important;
+  border-color: #78a965;
+}
+
+.terminal-os section[role="dialog"] button[type="submit"] {
+  color: #d6ffc0 !important;
+  background: #17361b !important;
+  border-color: #6ba259;
+  text-shadow: 0 0 6px rgba(177, 255, 143, 0.25);
+}
+
+.terminal-os section[role="dialog"] button[type="submit"]:hover {
+  background: #204a25 !important;
+}
+
+.terminal-os section[role="dialog"] [role="alert"] {
+  color: #ffc0a8 !important;
+  background: #28140f !important;
+  border: 1px solid #76433a;
+}
+
+.terminal-os section[role="dialog"] button[aria-label="Close"] {
+  min-height: 34px;
+  width: 34px;
+  color: #8ba27e !important;
+  background: #131a13 !important;
+  border-color: #344a34;
+}
+
+.terminal-os > div[role="status"] {
+  color: #caffad !important;
+  background: #102515 !important;
+  border: 1px solid #4b7a43;
+  border-radius: 3px !important;
+  box-shadow: 0 0 18px rgba(89, 226, 77, 0.14) !important;
+  font-size: 11px !important;
+}
+
+@keyframes float-in {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(12px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.float-in {
+  animation: float-in .45s ease both;
+}
+
+.modal-in {
+  animation: modal-in .2s ease both;
+}
+
+@media (max-width: 760px) {
+  .terminal-os > header > div > div:first-child > div > div:first-child {
+    font-size: 11px !important;
+  }
+
+  .terminal-os > header > div > div:last-child > div {
+    min-width: 116px !important;
+    padding: 7px 8px !important;
+  }
+
+  .terminal-os > main {
+    padding: 21px 18px !important;
+    border-right-width: 7px;
+    border-left-width: 7px;
+  }
+
+  .terminal-os > main > section:first-child {
+    min-height: 0;
+    padding: 25px 21px !important;
+  }
+
+  .terminal-os #collection > div:first-child {
+    gap: 17px !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .terminal-os {
+    padding: 6px;
+  }
+
+  .terminal-os > header {
+    top: 6px;
+    border-radius: 9px 9px 0 0;
+  }
+
+  .terminal-os > header > div {
+    flex-wrap: wrap;
+    gap: 11px !important;
+    padding: 10px 11px !important;
+  }
+
+  .terminal-os > header > div > div:first-child {
+    width: 100%;
+  }
+
+  .terminal-os > header > div > div:last-child {
+    width: 100%;
+    margin-left: 0 !important;
+  }
+
+  .terminal-os > header > div > div:last-child > div {
+    min-width: 0 !important;
+    flex: 1 1 0;
+  }
+
+  .terminal-os > main {
+    padding: 18px 13px !important;
+    border-right-width: 5px;
+    border-bottom-width: 8px;
+    border-left-width: 5px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .terminal-os > main > section:first-child {
+    padding: 22px 17px !important;
+  }
+
+  .terminal-os > main > section:first-child h1 {
+    font-size: clamp(24px, 8.2vw, 34px) !important;
+  }
+
+  .terminal-os #collection > div:first-child > div:last-child {
+    width: 100%;
+  }
+
+  .terminal-os #collection label:has(input[type="search"]) {
+    width: 100% !important;
+  }
+
+  .terminal-os section[role="dialog"] {
+    padding: 21px !important;
+    box-shadow: 0 0 0 4px #171b18, 0 24px 70px rgba(0, 0, 0, 0.75), inset 0 0 30px rgba(88, 213, 72, 0.055) !important;
+  }
+}
+
+.terminal-os #collection article > div:first-child {
+  border-color: transparent !important;
+}
+
+.terminal-os #collection article > div:first-child > a > span:first-child {
+  width: 42px !important;
+  height: 42px !important;
+  color: #adff8b !important;
+  background: #102112 !important;
+  border: 1px solid #3f6b41;
+  border-radius: 3px !important;
+  text-shadow: 0 0 8px rgba(133, 255, 112, 0.3);
+}
+
+.terminal-os #collection article > div:first-child > a > span:nth-child(2) > span:first-child {
+  color: #c3ff98 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.025em !important;
+  text-shadow: 0 0 8px rgba(133, 255, 112, 0.19);
+}
+
+.terminal-os #collection article > div:first-child > a > span:nth-child(2) > span:nth-child(2) {
+  color: #789574 !important;
+  font-size: 9px !important;
+}
+
+.terminal-os #collection article a {
+  text-decoration: none;
+}
+
+.terminal-os #collection article > div:nth-child(4) a {
+  border-radius: 2px;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.terminal-os #collection article > div:nth-child(4) a:hover {
+  border-color: #78a965 !important;
+  filter: brightness(1.16);
+  box-shadow: 0 0 11px rgba(106, 235, 91, 0.1);
+}
+
+.terminal-os #collection article p {
+  color: #91aa87 !important;
+  font-size: 9px !important;
+}
+
+.terminal-os #collection article details summary {
+  color: #86aa78 !important;
+  font-size: 8px !important;
+}
+
+.terminal-os #collection article details p {
+  color: #849d7b !important;
+  font-size: 9px !important;
+}
+
+.terminal-os #collection article img {
+  border-radius: 1px;
+}
+
+.terminal-os #collection article > div:last-child {
+  border-color: #233d27 !important;
+}
+
+.terminal-os #collection article > div:last-child button {
+  min-height: 28px;
+  border: 1px solid transparent;
+  border-radius: 2px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #8bb57e !important;
+}
+
+.terminal-os #collection article > div:last-child button:last-child {
+  color: #c68776 !important;
+}
+
+.terminal-os #collection article > div:last-child button:last-child:hover {
+  color: #ffc0a8 !important;
+  background: #2b1410 !important;
+  border-color: #76433a;
+}
+
+/* Unified green treatment for every project link and deployment state. */
+.terminal-os #collection article .developer-link {
+  color: #b6f398 !important;
+  background: linear-gradient(135deg, #102414, #0a190d) !important;
+  border-color: #365f39 !important;
+  border-radius: 2px;
+}
+
+.terminal-os #collection article .developer-link[data-link-kind="github"],
+.terminal-os #collection article .developer-link[data-link-kind="vercel"],
+.terminal-os #collection article .developer-link[data-link-kind="live"],
+.terminal-os #collection article .developer-link[data-link-kind="development"],
+.terminal-os #collection article .developer-link[data-link-kind="staging"],
+.terminal-os #collection article .developer-link[data-link-kind="docs"],
+.terminal-os #collection article .developer-link[data-link-kind="other"] {
+  color: #b6f398 !important;
+  background: linear-gradient(135deg, #102414, #0a190d) !important;
+  border-color: #365f39 !important;
+}
+
+.terminal-os #collection article .developer-link:hover {
+  color: #d5ffae !important;
+  background: linear-gradient(135deg, #19371d, #102414) !important;
+  border-color: #78a965 !important;
+  box-shadow: 0 0 12px rgba(106, 235, 91, 0.14);
+}
+
+.terminal-os #collection article .developer-link span span:last-child {
+  color: #789d71 !important;
+}
+
+.terminal-os #collection article .project-status {
+  color: #b4ed96 !important;
+  background: #102414 !important;
+  border-color: #3b6740 !important;
+}
+
+.terminal-os #collection article .project-status[data-status="live"] {
+  color: #d0ffab !important;
+  background: #15331a !important;
+  border-color: #5b914e !important;
+}
+
+.terminal-os #collection article .project-status[data-status="maintenance"],
+.terminal-os #collection article .project-status[data-status="archived"] {
+  color: #93bf81 !important;
+  background: #101f12 !important;
+  border-color: #38573a !important;
+}
+
+/* Professional footer */
+.terminal-os .site-footer {
+  border-color: #2a4a2e !important;
+  color: #8fae84;
+}
+
+.terminal-os .site-footer h2 {
+  color: #7ca072 !important;
+  font-family: "Courier New", Courier, monospace !important;
+  font-size: 10px !important;
+  letter-spacing: 0.17em !important;
+}
+
+.terminal-os .site-footer p,
+.terminal-os .site-footer li,
+.terminal-os .site-footer span {
+  color: inherit;
+  font-size: inherit;
+}
+
+.terminal-os .site-footer .footer-social {
+  background: linear-gradient(140deg, #102414, #091409);
+  box-shadow: inset 0 0 12px rgba(96, 214, 85, 0.05);
+}
+
+.terminal-os .site-footer .footer-social:hover {
+  color: #d7ffb4 !important;
+  background: linear-gradient(140deg, #1a3b1f, #102414);
+  border-color: #78a965 !important;
+  box-shadow: 0 0 14px rgba(106, 235, 91, 0.2);
+  transform: translateY(-1px);
+}
+
+.terminal-os .site-footer .footer-text-link {
+  color: #8fae84 !important;
+  text-decoration: none;
+  transition: color .18s ease;
+}
+
+.terminal-os .site-footer .footer-text-link:hover {
+  color: #ccffa6 !important;
+  text-shadow: 0 0 8px rgba(134, 255, 121, 0.35);
+}
+
+.terminal-os .site-footer .footer-manage {
+  border-radius: 2px;
+  background: #102112;
+  color: #a7ed89;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.terminal-os .site-footer .footer-manage:hover {
+  background: #17361b;
+  border-color: #78a965;
+  color: #d6ffc0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
