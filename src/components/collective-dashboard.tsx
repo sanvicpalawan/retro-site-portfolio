@@ -727,7 +727,7 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
   return (
     <div className="terminal-os min-h-screen bg-[#f5f7f4] text-[#17251f]">
       <header className="sticky top-0 z-30 border-b border-[#e8ede9] bg-[#f7f9f6]/95 backdrop-blur-xl">
-        <div className="mx-auto flex min-h-[86px] max-w-[1440px] items-center justify-between gap-3 px-4 py-3 sm:px-7 lg:px-10">
+        <div className="mx-auto flex min-h-[86px] w-full max-w-[1440px] min-w-0 flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-7 lg:flex-nowrap lg:px-10">
           <div className="flex min-w-0 items-center gap-3">
             <button type="button" onClick={handleLogoClick} title="Click the logo three times for admin access" aria-label="Palawan Collective OS logo — click three times for admin access" className="rounded-[16px] transition duration-200 hover:scale-[1.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6c9b7c] focus-visible:ring-offset-2">
               <BrandMark logoData={content.logoData} />
@@ -744,15 +744,15 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
             <a href="#about" className="transition hover:text-[#205b46]">ABOUT</a>
           </nav>
 
-          <div className="ml-auto flex items-center gap-2 sm:gap-2.5">
+          <div className="ml-auto flex w-full min-w-0 items-center gap-2 sm:w-auto sm:gap-2.5">
             <Clock label="LOCAL TIME" city="Manila" timeZone="Asia/Manila" now={now} />
             <Clock label="LOCAL TIME" city="Texas" timeZone="America/Chicago" now={now} />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1440px] px-4 pb-12 pt-7 sm:px-7 sm:pt-9 lg:px-10 lg:pt-11">
-        <section className="float-in relative isolate overflow-hidden rounded-[28px] bg-[#1c4c39] px-6 py-8 text-white shadow-[0_18px_44px_rgba(26,73,52,0.12)] sm:rounded-[34px] sm:px-10 sm:py-10 lg:min-h-[272px] lg:px-12 lg:py-11">
+      <main className="mx-auto w-full min-w-0 max-w-[1440px] px-4 pb-12 pt-7 sm:px-7 sm:pt-9 lg:px-10 lg:pt-11">
+        <section className="float-in relative isolate min-w-0 overflow-hidden rounded-[28px] bg-[#1c4c39] px-6 py-8 text-white shadow-[0_18px_44px_rgba(26,73,52,0.12)] sm:rounded-[34px] sm:px-10 sm:py-10 lg:min-h-[272px] lg:px-12 lg:py-11">
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
             <div className="absolute -right-24 -top-52 h-[430px] w-[430px] rounded-full border border-white/[0.09]" />
             <div className="absolute -right-4 -top-32 h-[330px] w-[330px] rounded-full border border-white/[0.10]" />
@@ -769,7 +769,7 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
               <span className="h-1.5 w-1.5 rounded-full bg-[#91c39c] shadow-[0_0_9px_rgba(145,195,156,0.85)]" />
               {content.badgeText || "\u00a0"}
             </div>
-            <h1 className="mt-5 max-w-[620px] text-[clamp(2.1rem,5vw,3.55rem)] font-semibold leading-[1.04] tracking-[-0.055em] text-white">
+            <h1 className="mt-5 max-w-[620px] break-words text-[clamp(2.1rem,5vw,3.55rem)] font-semibold leading-[1.04] tracking-[-0.055em] text-white">
               {content.heroHeading} <span className="text-[#c4ddc8]">{content.heroHighlight}</span>
             </h1>
             <p className="mt-4 max-w-[480px] whitespace-pre-line text-[13px] leading-6 text-[#d4e1d6] sm:text-[14px]">
@@ -795,7 +795,7 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
         </section>
 
         {(media.length > 0 || isAdmin) && (
-          <section id="gallery" className="terminal-gallery mt-7 scroll-mt-28 border border-[#2e5232] bg-[#09130b] p-4 shadow-[inset_0_0_25px_rgba(87,207,74,0.04)] sm:p-6">
+          <section id="gallery" className="terminal-gallery mt-7 min-w-0 scroll-mt-28 border border-[#2e5232] bg-[#09130b] p-4 shadow-[inset_0_0_25px_rgba(87,207,74,0.04)] sm:p-6">
             <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
               <div>
                 <div className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.19em] text-[#83ac79]"><span className="h-px w-5 bg-[#52734b]" /> THE PINBOARD</div>
@@ -836,9 +836,9 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
           </section>
         )}
 
-        <section id="collection" className="scroll-mt-28 pt-10 sm:pt-12">
-          <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-            <div>
+        <section id="collection" className="min-w-0 scroll-mt-28 pt-10 sm:pt-12">
+          <div className="flex min-w-0 flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+            <div className="min-w-0">
               <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.19em] text-[#6c8b76]">
                 <span className="h-px w-5 bg-[#83a58c]" /> DEVELOPERS · PROJECTS
               </div>
@@ -849,8 +849,8 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
               <p className="mt-1.5 text-[13px] leading-6 text-[#7d8981]">{content.collectionDescription}</p>
             </div>
 
-            <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
-              <label className="relative block w-full sm:w-[248px]">
+            <div className="flex min-w-0 flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center xl:flex-nowrap">
+              <label className="relative block w-full min-w-0 sm:w-[248px] sm:shrink-0">
                 <span className="sr-only">Search your sites</span>
                 <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#87958b]"><SearchIcon /></span>
                 <input value={search} onChange={(event) => setSearch(event.target.value)} type="search" placeholder="Find a favorite…" className="h-11 w-full rounded-xl bg-white pl-10 pr-4 text-[12px] text-[#26372d] shadow-[0_2px_10px_rgba(30,61,42,0.035)] outline-none ring-1 ring-inset ring-[#e6ece7] placeholder:text-[#a0aaa2] focus:ring-2 focus:ring-[#91b19a]" />
@@ -878,10 +878,10 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
           </div>
 
           {filteredSites.length > 0 ? (
-            <div className="mt-7 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-7 grid min-w-0 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
               {filteredSites.map((site, index) => (
-                <article key={site.id} className="group flex min-h-[260px] flex-col rounded-[22px] bg-white p-5 shadow-[0_4px_20px_rgba(27,57,37,0.035)] ring-1 ring-inset ring-[#e8ede9] transition duration-200 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(27,57,37,0.08)] hover:ring-[#d9e5db] sm:p-5">
-                  <div className="flex items-start gap-3">
+                <article key={site.id} className="group flex min-h-[260px] min-w-0 flex-col rounded-[22px] bg-white p-5 shadow-[0_4px_20px_rgba(27,57,37,0.035)] ring-1 ring-inset ring-[#e8ede9] transition duration-200 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(27,57,37,0.08)] hover:ring-[#d9e5db] sm:p-5">
+                  <div className="flex min-w-0 items-start gap-3">
                     <a href={site.url} target="_blank" rel="noreferrer" aria-label={`Open primary ${site.name} site`} className="flex min-w-0 flex-1 items-start gap-3.5 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#6c9b7c]">
                       <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-[16px] text-[17px] font-semibold tracking-[-0.04em] ${colorSwatches[index % colorSwatches.length]}`}>
                         {site.name.trim().charAt(0).toLocaleUpperCase() || "↗"}
@@ -939,8 +939,8 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
                   </details>}
 
                   {isAdmin && (
-                    <div className="mt-auto flex items-center justify-end gap-1 border-t border-[#edf1ee] pt-3">
-                      <span className="mr-auto text-[8px] uppercase tracking-[0.06em] text-[#71896b]">{site.links.length} link{site.links.length === 1 ? "" : "s"} · {site.images.length} image{site.images.length === 1 ? "" : "s"}</span>
+                    <div className="mt-auto flex flex-wrap items-center justify-end gap-1 border-t border-[#edf1ee] pt-3">
+                      <span className="mr-auto w-full min-w-0 text-[8px] uppercase tracking-[0.06em] text-[#71896b] sm:w-auto">{site.links.length} link{site.links.length === 1 ? "" : "s"} · {site.images.length} image{site.images.length === 1 ? "" : "s"}</span>
                       <button type="button" onClick={() => setEditor({ mode: "edit", site })} className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[9px] font-semibold uppercase text-[#8db781] transition hover:bg-[#102112] hover:text-[#c2ff9a]"><EditIcon /> Manage</button>
                       <button type="button" onClick={() => setSiteToDelete(site)} className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[9px] font-semibold uppercase text-[#bb897b] transition hover:bg-[#21120f] hover:text-[#ffc0a8]"><DeleteIcon /> Delete</button>
                     </div>

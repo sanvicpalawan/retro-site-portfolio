@@ -132,7 +132,7 @@ export default function FooterEditor({
   }
 
   const inputClass = "mt-1.5 min-h-10 w-full border border-[#385d39] bg-[#040a05] px-3 py-2 text-[11px] leading-5 text-[#c4ff9b] outline-none placeholder:text-[#5f7959] focus:border-[#78a965]";
-  const labelClass = "block text-[9px] font-bold uppercase tracking-[0.1em] text-[#a2c493]";
+  const labelClass = "block min-w-0 text-[9px] font-bold uppercase tracking-[0.1em] text-[#a2c493]";
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/80 p-3 backdrop-blur-sm sm:p-5" onMouseDown={(event) => event.target === event.currentTarget && !busy && !linkBusy && onClose()}>
@@ -181,7 +181,7 @@ export default function FooterEditor({
             <span className="text-[9px] text-[#789373]">{links.length}/{MAX_FOOTER_LINKS} saved</span>
           </div>
 
-          <form onSubmit={submitLink} className="mt-3 grid gap-2 border border-[#203d25] bg-[#071008] p-2.5 sm:grid-cols-[130px_minmax(110px,1fr)_minmax(150px,1.4fr)_120px_70px_auto] sm:items-end">
+          <form onSubmit={submitLink} className="mt-3 grid min-w-0 gap-2 border border-[#203d25] bg-[#071008] p-2.5 lg:grid-cols-[130px_minmax(0,1fr)_minmax(0,1.4fr)_120px_70px_auto] lg:items-end">
             <label className="text-[8px] font-bold uppercase tracking-[0.08em] text-[#88a57e]">Platform
               <select value={draft.platform} onChange={(event) => {
                 const platform = event.target.value as FooterPlatform;
