@@ -941,6 +941,54 @@ button {
   color: #d6ffc0;
 }
 
+/* Keep responsive grids, form controls, and user-managed copy inside the CRT frame. */
+.terminal-os > header,
+.terminal-os > main,
+.terminal-os > header > div,
+.terminal-os > header > div > *,
+.terminal-os > main > section,
+.terminal-os #collection > div:first-child,
+.terminal-os #collection > div:first-child > *,
+.terminal-os #collection article,
+.terminal-os [role="dialog"] {
+  min-width: 0;
+}
+
+.terminal-os :is(input, textarea, select) {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.terminal-os img {
+  max-width: 100%;
+}
+
+.terminal-os :is(h1, h2, h3, p, li, summary, figcaption) {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1023px) {
+  .terminal-os #collection > div:first-child > div:last-child {
+    width: 100%;
+  }
+}
+
+@media (max-width: 639px) {
+  .terminal-os > main {
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+  }
+
+  .terminal-os > main > section:first-child {
+    padding-right: 14px !important;
+    padding-left: 14px !important;
+  }
+
+  .terminal-os #collection article {
+    padding: 14px !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     scroll-behavior: auto !important;

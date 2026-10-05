@@ -253,7 +253,7 @@ export default function SiteEditor({
   }
 
   const inputClass = "mt-1.5 min-h-10 w-full border border-[#385d39] bg-[#040a05] px-3 py-2 text-[11px] leading-5 text-[#c4ff9b] outline-none placeholder:text-[#5f7959] focus:border-[#78a965]";
-  const labelClass = "block text-[9px] font-bold uppercase tracking-[0.1em] text-[#a2c493]";
+  const labelClass = "block min-w-0 text-[9px] font-bold uppercase tracking-[0.1em] text-[#a2c493]";
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/80 p-3 backdrop-blur-sm sm:p-5" onMouseDown={(event) => event.target === event.currentTarget && !busy && !uploadBusy && onClose()}>
@@ -268,11 +268,11 @@ export default function SiteEditor({
         </div>
 
         <form onSubmit={submit} className="mt-5">
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid min-w-0 gap-4 md:grid-cols-2">
             <label className={labelClass}>Project / site name *
               <input required maxLength={120} value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Member Portal" className={inputClass} />
             </label>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid min-w-0 gap-3 sm:grid-cols-2">
               <label className={labelClass}>Project status
                 <select value={status} onChange={(event) => setStatus(event.target.value as SiteStatus)} className={inputClass}>
                   <option value="in-development">In development</option>
@@ -287,11 +287,11 @@ export default function SiteEditor({
             </div>
           </div>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
             <label className={labelClass}>What is this project?
               <textarea rows={2} maxLength={3000} value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Short description and who this site is for" className={inputClass} />
             </label>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid min-w-0 gap-3 sm:grid-cols-2">
               <label className={labelClass}>Owner / contact
                 <input maxLength={120} value={owner} onChange={(event) => setOwner(event.target.value)} placeholder="Team or maintainer" className={inputClass} />
               </label>
@@ -332,11 +332,11 @@ export default function SiteEditor({
             <p className="mt-2 text-[9px] text-[#71896b]">At least one URL is required. Empty optional rows are ignored. For a local development server, use <code>http://localhost:3000</code>.</p>
           </section>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
             <label className={labelClass}>Developer handoff / setup notes
               <textarea rows={4} maxLength={6000} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="How to run locally, environment variables required (never paste secret values), test account instructions, deployment details, known issues…" className={inputClass} />
             </label>
-            <section className="border border-[#315537] bg-[#08110a] p-3 sm:p-4">
+            <section className="min-w-0 border border-[#315537] bg-[#08110a] p-3 sm:p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#baff91]">Project images</h3>
