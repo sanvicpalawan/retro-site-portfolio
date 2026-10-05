@@ -6,6 +6,7 @@ import type { FooterLinkRecord, SiteDirectoryEntry, SiteImageSummary, SiteMediaS
 import SiteEditor from "@/components/site-editor";
 import SiteFooter from "@/components/site-footer";
 import FooterEditor from "@/components/footer-editor";
+import ImageViewer, { type ViewerImage } from "@/components/image-viewer";
 import { DEFAULT_SITE_CONTENT, type SiteContent } from "@/lib/site-content";
 import type { FooterLinkInput } from "@/lib/footer-links";
 import type { SiteInput } from "@/lib/site-validation";
@@ -18,6 +19,7 @@ type DashboardProps = {
 };
 
 type EditorState = { mode: "create" } | { mode: "edit"; site: SiteDirectoryEntry } | null;
+type ViewerState = { images: ViewerImage[]; index: number; label: string } | null;
 type ClockProps = { label: string; city: string; timeZone: string; now: Date | null };
 
 type ApiError = { error?: string };
@@ -387,6 +389,7 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
   const [mediaBusy, setMediaBusy] = useState(false);
   const [mediaError, setMediaError] = useState("");
   const [toast, setToast] = useState("");
+  const [viewer, setViewer] = useState<ViewerState>(null);
   const logoClicks = useRef<number[]>([]);
   const mediaInput = useRef<HTMLInputElement>(null);
 
@@ -451,6 +454,27 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
       ...site.links.map((link) => `${link.kind} ${link.label} ${link.url}`),
     ].join(" ").toLocaleLowerCase().includes(needle));
   }, [savedSites, search]);
+
+  const projectImages = useMemo(() => {
+    const bySite = new Map<number, ViewerImage[]>();
+    for (const site of savedSites) {
+      bySite.set(site.id, site.images.map((image) => ({
+        src: `/api/sites/${site.id}/images/${image.id}`,
+        alt: image.altText || image.filename,
+        caption: image.filename,
+      })));
+    }
+    return bySite;
+  }, [savedSites]);
+
+  const galleryImages = useMemo<ViewerImage[]>(
+    () => media.map((item) => ({
+      src: `/api/media/${item.id}`,
+      alt: item.altText || item.filename,
+      caption: item.filename,
+    })),
+    [media],
+  );
 
   function handleLogoClick() {
     const current = Date.now();
@@ -680,6 +704,7 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
       }
       if (!response.ok) throw new Error(result.error || "Could not remove that image.");
       setMedia((current) => current.filter((savedImage) => savedImage.id !== item.id));
+      setViewer((current) => (current?.label === "Collective images" ? null : current));
       setToast("Image removed from the gallery.");
     } catch (caught) {
       setMediaError(caught instanceof Error ? caught.message : "Could not remove that image.");
@@ -820,9 +845,18 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
 
             {media.length > 0 ? (
               <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {media.map((item) => (
+                {media.map((item, itemIndex) => (
                   <figure key={item.id} className="group relative m-0 overflow-hidden border border-[#315537] bg-[#071008]">
-                    <img src={`/api/media/${item.id}`} alt={item.altText || item.filename} loading="lazy" className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.025]" />
+                    <button
+                      type="button"
+                      onClick={() => setViewer({ images: galleryImages, index: itemIndex, label: "Collective images" })}
+                      aria-haspopup="dialog"
+                      title={`View ${item.altText || item.filename} full screen`}
+                      className="image-thumb block w-full cursor-zoom-in overflow-hidden"
+                    >
+                      <span className="sr-only">View {item.altText || item.filename} full screen</span>
+                      <img src={`/api/media/${item.id}`} alt={item.altText || item.filename} loading="lazy" className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.025]" />
+                    </button>
                     <figcaption className="flex min-h-9 items-center justify-between gap-2 border-t border-[#29452c] px-3 py-2 text-[9px] text-[#88a77e]">
                       <span className="truncate">{item.altText || item.filename}</span>
                       {isAdmin && <button type="button" onClick={() => void removeMedia(item)} aria-label={`Remove ${item.filename}`} className="shrink-0 border border-[#76433a] bg-[#28140f] px-2 py-1 text-[9px] font-semibold uppercase text-[#ffc0a8]">Remove</button>}
@@ -879,74 +913,95 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
 
           {filteredSites.length > 0 ? (
             <div className="mt-7 grid min-w-0 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredSites.map((site, index) => (
-                <article key={site.id} className="group flex min-h-[260px] min-w-0 flex-col rounded-[22px] bg-white p-5 shadow-[0_4px_20px_rgba(27,57,37,0.035)] ring-1 ring-inset ring-[#e8ede9] transition duration-200 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(27,57,37,0.08)] hover:ring-[#d9e5db] sm:p-5">
-                  <div className="flex min-w-0 items-start gap-3">
-                    <a href={site.url} target="_blank" rel="noreferrer" aria-label={`Open primary ${site.name} site`} className="flex min-w-0 flex-1 items-start gap-3.5 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#6c9b7c]">
-                      <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-[16px] text-[17px] font-semibold tracking-[-0.04em] ${colorSwatches[index % colorSwatches.length]}`}>
-                        {site.name.trim().charAt(0).toLocaleUpperCase() || "↗"}
-                      </span>
-                      <span className="min-w-0 flex-1 pt-0.5">
-                        <span className="block truncate text-[13px] font-semibold uppercase tracking-[0.025em] text-[#c3ff98]">{site.name}</span>
-                        <span className="mt-1 block truncate text-[9px] text-[#789574]">{site.category || domainFor(site.url)}</span>
-                      </span>
-                    </a>
-                    <span data-status={site.status} className="project-status shrink-0 border px-1.5 py-1 text-[8px] font-bold uppercase tracking-[0.045em]">
-                      {site.status.replaceAll("-", " ")}
-                    </span>
-                  </div>
-
-                  {site.description && <p className="mt-3 line-clamp-2 text-[10px] leading-[1.65] text-[#91aa87]">{site.description}</p>}
-                  {(site.owner || site.techStack) && (
-                    <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[8px] uppercase tracking-[0.035em] text-[#708b68]">
-                      {site.owner && <span><span className="text-[#8db781]">OWNER</span> {site.owner}</span>}
-                      {site.techStack && <span className="max-w-full truncate"><span className="text-[#8db781]">STACK</span> {site.techStack}</span>}
-                    </div>
-                  )}
-                  {site.backendUrl && (
-                    <p className="mt-2 flex min-w-0 items-center gap-1.5 text-[8px] uppercase tracking-[0.035em] text-[#708b68]">
-                      <span className="shrink-0 text-[#8db781]">BACKEND</span>
-                      <a href={site.backendUrl} target="_blank" rel="noreferrer" className="min-w-0 truncate normal-case text-[#a3cd8d] underline-offset-2 hover:underline">{site.backendUrl}</a>
-                    </p>
-                  )}
-
-                  <div className="mt-4 grid gap-1.5 sm:grid-cols-2">
-                    {site.links.map((link) => (
-                      <a key={link.id || `${link.kind}-${link.url}`} data-link-kind={link.kind} href={link.url} target="_blank" rel="noreferrer" title={`${link.label}: ${link.url}`} className="developer-link flex min-h-9 min-w-0 items-center justify-between gap-2 border px-2.5 py-1.5 text-[8px] uppercase transition">
-                        <span className="min-w-0">
-                          <span className="block truncate font-bold tracking-[0.06em]">{link.label}</span>
-                          <span className="mt-0.5 block truncate normal-case text-[#71896b]">{domainFor(link.url)}</span>
+              {filteredSites.map((site, index) => {
+                const siteViewerImages = projectImages.get(site.id) ?? [];
+                return (
+                  <article key={site.id} className="group flex min-h-[260px] min-w-0 flex-col rounded-[22px] bg-white p-5 shadow-[0_4px_20px_rgba(27,57,37,0.035)] ring-1 ring-inset ring-[#e8ede9] transition duration-200 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(27,57,37,0.08)] hover:ring-[#d9e5db] sm:p-5">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <a href={site.url} target="_blank" rel="noreferrer" aria-label={`Open primary ${site.name} site`} className="flex min-w-0 flex-1 items-start gap-3.5 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#6c9b7c]">
+                        <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-[16px] text-[17px] font-semibold tracking-[-0.04em] ${colorSwatches[index % colorSwatches.length]}`}>
+                          {site.name.trim().charAt(0).toLocaleUpperCase() || "↗"}
                         </span>
-                        <ArrowIcon />
+                        <span className="min-w-0 flex-1 pt-0.5">
+                          <span className="block truncate text-[13px] font-semibold uppercase tracking-[0.025em] text-[#c3ff98]">{site.name}</span>
+                          <span className="mt-1 block truncate text-[9px] text-[#789574]">{site.category || domainFor(site.url)}</span>
+                        </span>
                       </a>
-                    ))}
-                  </div>
+                      <span data-status={site.status} className="project-status shrink-0 border px-1.5 py-1 text-[8px] font-bold uppercase tracking-[0.045em]">
+                        {site.status.replaceAll("-", " ")}
+                      </span>
+                    </div>
 
-                  {site.images.length > 0 && (
-                    <div className="mt-3 flex gap-1.5 overflow-hidden">
-                      {site.images.slice(0, 4).map((image) => (
-                        <a key={image.id} href={`/api/sites/${site.id}/images/${image.id}`} target="_blank" rel="noreferrer" title={image.altText || image.filename} className="block h-12 w-[68px] shrink-0 overflow-hidden border border-[#29452c] bg-[#050905]">
-                          <img src={`/api/sites/${site.id}/images/${image.id}`} alt={image.altText || image.filename} loading="lazy" className="h-full w-full object-cover transition group-hover:opacity-90" />
+                    {site.description && <p className="mt-3 line-clamp-2 text-[10px] leading-[1.65] text-[#91aa87]">{site.description}</p>}
+                    {(site.owner || site.techStack) && (
+                      <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[8px] uppercase tracking-[0.035em] text-[#708b68]">
+                        {site.owner && <span><span className="text-[#8db781]">OWNER</span> {site.owner}</span>}
+                        {site.techStack && <span className="max-w-full truncate"><span className="text-[#8db781]">STACK</span> {site.techStack}</span>}
+                      </div>
+                    )}
+                    {site.backendUrl && (
+                      <p className="mt-2 flex min-w-0 items-center gap-1.5 text-[8px] uppercase tracking-[0.035em] text-[#708b68]">
+                        <span className="shrink-0 text-[#8db781]">BACKEND</span>
+                        <a href={site.backendUrl} target="_blank" rel="noreferrer" className="min-w-0 truncate normal-case text-[#a3cd8d] underline-offset-2 hover:underline">{site.backendUrl}</a>
+                      </p>
+                    )}
+
+                    <div className="mt-4 grid gap-1.5 sm:grid-cols-2">
+                      {site.links.map((link) => (
+                        <a key={link.id || `${link.kind}-${link.url}`} data-link-kind={link.kind} href={link.url} target="_blank" rel="noreferrer" title={`${link.label}: ${link.url}`} className="developer-link flex min-h-9 min-w-0 items-center justify-between gap-2 border px-2.5 py-1.5 text-[8px] uppercase transition">
+                          <span className="min-w-0">
+                            <span className="block truncate font-bold tracking-[0.06em]">{link.label}</span>
+                            <span className="mt-0.5 block truncate normal-case text-[#71896b]">{domainFor(link.url)}</span>
+                          </span>
+                          <ArrowIcon />
                         </a>
                       ))}
-                      {site.images.length > 4 && <span className="grid h-12 min-w-10 place-items-center border border-[#29452c] bg-[#08110a] px-2 text-[9px] text-[#91ad83]">+{site.images.length - 4}</span>}
                     </div>
-                  )}
 
-                  {site.notes && <details className="mt-3 border-t border-[#233d27] pt-2.5">
-                    <summary className="cursor-pointer text-[8px] font-bold uppercase tracking-[0.08em] text-[#86aa78]">Developer handoff notes</summary>
-                    <p className="mt-2 whitespace-pre-wrap break-words text-[9px] leading-5 text-[#849d7b]">{site.notes}</p>
-                  </details>}
+                    {site.images.length > 0 && (
+                      <div className="mt-3 flex gap-1.5 overflow-hidden">
+                        {site.images.slice(0, 4).map((image, imageIndex) => (
+                          <button
+                            key={image.id}
+                            type="button"
+                            onClick={() => setViewer({ images: siteViewerImages, index: imageIndex, label: site.name })}
+                            aria-haspopup="dialog"
+                            title={`View ${image.altText || image.filename} full screen`}
+                            className="image-thumb block h-12 w-[68px] shrink-0 cursor-zoom-in overflow-hidden"
+                          >
+                            <span className="sr-only">View {image.altText || image.filename} full screen</span>
+                            <img src={`/api/sites/${site.id}/images/${image.id}`} alt={image.altText || image.filename} loading="lazy" className="h-full w-full object-cover transition group-hover:opacity-90" />
+                          </button>
+                        ))}
+                        {site.images.length > 4 && (
+                          <button
+                            type="button"
+                            onClick={() => setViewer({ images: siteViewerImages, index: 4, label: site.name })}
+                            aria-haspopup="dialog"
+                            title={`View all ${site.images.length} images for ${site.name}`}
+                            className="image-thumb image-thumb-more grid h-12 min-w-10 cursor-zoom-in place-items-center px-2 text-[9px]"
+                          >
+                            +{site.images.length - 4}
+                          </button>
+                        )}
+                      </div>
+                    )}
 
-                  {isAdmin && (
-                    <div className="mt-auto flex flex-wrap items-center justify-end gap-1 border-t border-[#edf1ee] pt-3">
-                      <span className="mr-auto w-full min-w-0 text-[8px] uppercase tracking-[0.06em] text-[#71896b] sm:w-auto">{site.links.length} link{site.links.length === 1 ? "" : "s"} · {site.images.length} image{site.images.length === 1 ? "" : "s"}</span>
-                      <button type="button" onClick={() => setEditor({ mode: "edit", site })} className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[9px] font-semibold uppercase text-[#8db781] transition hover:bg-[#102112] hover:text-[#c2ff9a]"><EditIcon /> Manage</button>
-                      <button type="button" onClick={() => setSiteToDelete(site)} className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[9px] font-semibold uppercase text-[#bb897b] transition hover:bg-[#21120f] hover:text-[#ffc0a8]"><DeleteIcon /> Delete</button>
-                    </div>
-                  )}
-                </article>
-              ))}
+                    {site.notes && <details className="mt-3 border-t border-[#233d27] pt-2.5">
+                      <summary className="cursor-pointer text-[8px] font-bold uppercase tracking-[0.08em] text-[#86aa78]">Developer handoff notes</summary>
+                      <p className="mt-2 whitespace-pre-wrap break-words text-[9px] leading-5 text-[#849d7b]">{site.notes}</p>
+                    </details>}
+
+                    {isAdmin && (
+                      <div className="mt-auto flex flex-wrap items-center justify-end gap-1 border-t border-[#edf1ee] pt-3">
+                        <span className="mr-auto w-full min-w-0 text-[8px] uppercase tracking-[0.06em] text-[#71896b] sm:w-auto">{site.links.length} link{site.links.length === 1 ? "" : "s"} · {site.images.length} image{site.images.length === 1 ? "" : "s"}</span>
+                        <button type="button" onClick={() => setEditor({ mode: "edit", site })} className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[9px] font-semibold uppercase text-[#8db781] transition hover:bg-[#102112] hover:text-[#c2ff9a]"><EditIcon /> Manage</button>
+                        <button type="button" onClick={() => setSiteToDelete(site)} className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[9px] font-semibold uppercase text-[#bb897b] transition hover:bg-[#21120f] hover:text-[#ffc0a8]"><DeleteIcon /> Delete</button>
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
             </div>
           ) : (
             <div className="mt-7 rounded-[24px] bg-white px-6 py-12 text-center shadow-[0_4px_20px_rgba(27,57,37,0.03)] ring-1 ring-inset ring-[#e8ede9] sm:py-16">
@@ -1020,6 +1075,15 @@ export default function CollectiveDashboard({ initialSites, initialContent, init
             setIsAdmin(true);
             setToast("Admin tools unlocked. You can keep managing the site without signing in again.");
           }}
+        />
+      )}
+      {viewer && (
+        <ImageViewer
+          images={viewer.images}
+          index={viewer.index}
+          label={viewer.label}
+          onIndexChange={(nextIndex) => setViewer((current) => (current ? { ...current, index: nextIndex } : current))}
+          onClose={() => setViewer(null)}
         />
       )}
       {toast && <div role="status" className="fixed bottom-5 left-1/2 z-[60] -translate-x-1/2 rounded-full bg-[#193e30] px-5 py-3 text-center text-[12px] font-medium text-white shadow-[0_12px_35px_rgba(19,55,39,0.24)]">{toast}</div>}

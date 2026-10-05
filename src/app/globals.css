@@ -997,3 +997,42 @@ button {
     transition-duration: .01ms !important;
   }
 }
+
+/* Image thumbnails double as lightbox triggers, so opt them out of the
+   default terminal button chrome (border, background, min-height). */
+.terminal-os .image-thumb,
+.terminal-os #collection article .image-thumb,
+.terminal-os .terminal-gallery .image-thumb,
+.terminal-os section[role="dialog"] .image-thumb {
+  min-height: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+  border: 1px solid #29452c !important;
+  border-radius: 1px !important;
+  background: #050905 !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  font-size: inherit !important;
+  letter-spacing: inherit !important;
+  text-transform: none !important;
+  text-shadow: none !important;
+}
+
+.terminal-os .image-thumb:hover,
+.terminal-os #collection article .image-thumb:hover,
+.terminal-os .terminal-gallery .image-thumb:hover,
+.terminal-os section[role="dialog"] .image-thumb:hover {
+  border-color: #78a965 !important;
+  background: #050905 !important;
+  box-shadow: 0 0 11px rgba(106, 235, 91, 0.12) !important;
+  filter: brightness(1.12);
+}
+
+.terminal-os #collection article .image-thumb-more {
+  padding: 0 8px !important;
+}
+
+.terminal-os .image-thumb:focus-visible {
+  outline: 2px solid #b7ff8a !important;
+  outline-offset: 2px;
+}

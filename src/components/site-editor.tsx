@@ -3,6 +3,7 @@
 import type { ChangeEvent, FormEvent } from "react";
 import { useRef, useState } from "react";
 import type { SiteDirectoryEntry, SiteImageSummary } from "@/db/schema";
+import ImageViewer, { type ViewerImage } from "@/components/image-viewer";
 import {
   SITE_LINK_KINDS,
   type SiteInput,
@@ -11,6 +12,7 @@ import {
 } from "@/lib/site-validation";
 
 type EditorState = { mode: "create" } | { mode: "edit"; site: SiteDirectoryEntry };
+type ViewerState = { images: ViewerImage[]; index: number; label: string } | null;
 type LinkDraft = { kind: SiteLinkKind; label: string; url: string };
 type ApiError = { error?: string };
 type UploadResult = { filename: string; altText: string; dataUrl: string };
@@ -124,6 +126,7 @@ export default function SiteEditor({
   const [uploadBusy, setUploadBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [viewer, setViewer] = useState<ViewerState>(null);
   const imageInput = useRef<HTMLInputElement>(null);
 
   function updateLink(index: number, patch: Partial<LinkDraft>) {
@@ -246,11 +249,19 @@ export default function SiteEditor({
     try {
       await onRemoveImage(siteRecord.id, image);
       setImages((current) => current.filter((entry) => entry.id !== image.id));
+      setViewer(null);
       setNotice("Project image removed.");
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not remove this image.");
     }
   }
+
+  const projectLabel = name.trim() || (editor.mode === "edit" ? editor.site.name : "Project images");
+  const savedViewerImages: ViewerImage[] = images.map((image) => ({
+    src: `/api/sites/${image.siteId}/images/${image.id}`,
+    alt: image.altText || image.filename,
+    caption: image.filename,
+  }));
 
   const inputClass = "mt-1.5 min-h-10 w-full border border-[#385d39] bg-[#040a05] px-3 py-2 text-[11px] leading-5 text-[#c4ff9b] outline-none placeholder:text-[#5f7959] focus:border-[#78a965]";
   const labelClass = "block min-w-0 text-[9px] font-bold uppercase tracking-[0.1em] text-[#a2c493]";
@@ -373,9 +384,18 @@ export default function SiteEditor({
               )}
               {images.length > 0 ? (
                 <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  {images.map((image) => (
+                  {images.map((image, imageIndex) => (
                     <figure key={image.id} className="group relative m-0 overflow-hidden border border-[#29452c] bg-[#050905]">
-                      <img src={`/api/sites/${image.siteId}/images/${image.id}`} alt={image.altText || image.filename} loading="lazy" className="aspect-[4/3] w-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setViewer({ images: savedViewerImages, index: imageIndex, label: projectLabel })}
+                        aria-haspopup="dialog"
+                        title={`View ${image.altText || image.filename} full screen`}
+                        className="image-thumb block w-full cursor-zoom-in overflow-hidden"
+                      >
+                        <span className="sr-only">View {image.altText || image.filename} full screen</span>
+                        <img src={`/api/sites/${image.siteId}/images/${image.id}`} alt={image.altText || image.filename} loading="lazy" className="aspect-[4/3] w-full object-cover" />
+                      </button>
                       <figcaption className="flex min-h-7 items-center justify-between gap-1 px-1.5 py-1 text-[8px] text-[#8aa57e]">
                         <span className="truncate">{image.altText || image.filename}</span>
                         <button type="button" disabled={uploadBusy} onClick={() => void removeImage(image)} className="shrink-0 border border-[#5d3c35] bg-[#21120f] px-1.5 py-0.5 text-[8px] uppercase text-[#e7a995]">×</button>
@@ -401,6 +421,15 @@ export default function SiteEditor({
           </div>
         </form>
       </section>
+      {viewer && (
+        <ImageViewer
+          images={viewer.images}
+          index={viewer.index}
+          label={viewer.label}
+          onIndexChange={(nextIndex) => setViewer((current) => (current ? { ...current, index: nextIndex } : current))}
+          onClose={() => setViewer(null)}
+        />
+      )}
     </div>
   );
 }

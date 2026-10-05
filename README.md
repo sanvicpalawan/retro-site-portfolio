@@ -20,6 +20,9 @@ GitHub; deployments build from the code committed here.
 - **Editable homepage** — badge, hero, collection headings, about text, logo, and all
   footer details, managed through the admin UI and stored in PostgreSQL.
 - **Shared media library** — homepage gallery images with validation and alt text.
+- **Shared image viewer** — one responsive lightbox for the collective gallery, project
+  card thumbnails, and editor images: zoom in/out, reset zoom, pan, keyboard and
+  backdrop close, preserved alt text, phone/tablet/d friendly.
 - **Footer link manager** — social, resource, and legal links grouped and ordered.
 - **Admin access** — passkey sign-in issuing a long-lived signed session token stored
   hashed in PostgreSQL, with cookie + bearer/header auth and revocation on sign-out.
@@ -80,6 +83,7 @@ retro-site-portfolio/
     │   ├── site-editor.tsx           # Create/edit project form + image uploads
     │   ├── site-footer.tsx           # Public footer rendering
     │   ├── footer-editor.tsx         # Admin footer content + links editor
+    │   ├── image-viewer.tsx          # Shared responsive lightbox (zoom, pan, close)
     │   └── brand-icons.tsx           # Brand/social SVG icon set
     │
     ├── db/
