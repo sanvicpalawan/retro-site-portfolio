@@ -35,6 +35,18 @@ export type SiteInput = {
 const SITE_STATUSES: readonly SiteStatus[] = ["in-development", "live", "maintenance", "archived"];
 const MAX_SITE_LINKS = 25;
 
+const LINK_KIND_FALLBACK_LABELS: Record<SiteLinkKind, string> = {
+  development: "Development",
+  staging: "Staging",
+  live: "Live / production",
+  backend: "Backend / API",
+  database: "Database",
+  github: "GitHub repository",
+  vercel: "Vercel project",
+  docs: "Documentation",
+  other: "Other URL",
+};
+
 function parseHttpUrl(value: unknown) {
   if (typeof value !== "string") return null;
   const raw = value.trim();
@@ -50,42 +62,57 @@ function parseHttpUrl(value: unknown) {
   }
 }
 
-function boundedText(value: unknown, max: number, fallback = "") {
+/**
+ * Lenient text: missing values become "", over-long values are truncated.
+ * Nothing here ever fails the save — only a blank project name does.
+ */
+function lenientText(value: unknown, max: number, fallback = "") {
   if (value === undefined || value === null) return fallback;
-  if (typeof value !== "string" || value.trim().length > max) return null;
-  return value.trim();
+  if (typeof value !== "string") return fallback;
+  const trimmed = value.trim();
+  if (!trimmed) return fallback;
+  return trimmed.slice(0, max);
 }
 
 export function parseSiteInput(value: unknown): SiteInput | null {
   if (!value || typeof value !== "object") return null;
   const candidate = value as Record<string, unknown>;
 
-  const name = boundedText(candidate.name, 120);
-  const description = boundedText(candidate.description, 3000);
-  const category = boundedText(candidate.category, 100);
-  const owner = boundedText(candidate.owner, 120);
-  const techStack = boundedText(candidate.techStack, 400);
-  const notes = boundedText(candidate.notes, 6000);
-  if (name === null || !name || description === null || category === null || owner === null || techStack === null || notes === null) return null;
+  // The project name is the only required text field. Every other text
+  // field is truncated to its column limit instead of rejecting the save.
+  const name = lenientText(candidate.name, 120);
+  if (!name) return null;
+
+  const description = lenientText(candidate.description, 3000);
+  const category = lenientText(candidate.category, 100);
+  const owner = lenientText(candidate.owner, 120);
+  const techStack = lenientText(candidate.techStack, 400);
+  const notes = lenientText(candidate.notes, 6000);
 
   const statusCandidate = candidate.status ?? "in-development";
-  if (typeof statusCandidate !== "string" || !SITE_STATUSES.includes(statusCandidate as SiteStatus)) return null;
-  const status = statusCandidate as SiteStatus;
+  const status: SiteStatus =
+    typeof statusCandidate === "string" && SITE_STATUSES.includes(statusCandidate as SiteStatus)
+      ? (statusCandidate as SiteStatus)
+      : "in-development";
 
+  // Link rows are forgiving: rows with an empty or unparseable URL are
+  // skipped, a missing label falls back to the link type name, and an
+  // unknown type falls back to "other". The save only fails when NO
+  // usable link remains at all.
   const parsedLinks: SiteLinkInput[] = [];
-  if (candidate.links !== undefined) {
-    if (!Array.isArray(candidate.links) || candidate.links.length > MAX_SITE_LINKS) return null;
-    for (const rawLink of candidate.links) {
-      if (!rawLink || typeof rawLink !== "object") return null;
+  if (Array.isArray(candidate.links)) {
+    for (const rawLink of candidate.links.slice(0, MAX_SITE_LINKS)) {
+      if (!rawLink || typeof rawLink !== "object") continue;
       const link = rawLink as Record<string, unknown>;
       const rawUrl = typeof link.url === "string" ? link.url.trim() : "";
       if (!rawUrl) continue;
       const url = parseHttpUrl(rawUrl);
-      const label = boundedText(link.label, 100);
-      const kind = typeof link.kind === "string" && SITE_LINK_KINDS.includes(link.kind as SiteLinkKind)
-        ? link.kind as SiteLinkKind
-        : null;
-      if (!url || label === null || !label || !kind) return null;
+      if (!url) continue;
+      const kind =
+        typeof link.kind === "string" && SITE_LINK_KINDS.includes(link.kind as SiteLinkKind)
+          ? (link.kind as SiteLinkKind)
+          : "other";
+      const label = lenientText(link.label, 100, LINK_KIND_FALLBACK_LABELS[kind]);
       parsedLinks.push({ kind, label, url });
     }
   }
@@ -101,15 +128,12 @@ export function parseSiteInput(value: unknown): SiteInput | null {
     parsedLinks.push({ kind: "live", label: "Primary site", url });
   }
 
-  // The backend/API endpoint can be supplied directly, or picked up from a
-  // link row that the admin marked as "Backend / API".
+  // An unparseable backend URL is ignored instead of failing the save.
   const rawBackendUrl = typeof candidate.backendUrl === "string" ? candidate.backendUrl.trim() : "";
   const backendLink = parsedLinks.find((link) => link.kind === "backend");
   let backendUrl = "";
   if (rawBackendUrl) {
-    const parsedBackendUrl = parseHttpUrl(rawBackendUrl);
-    if (!parsedBackendUrl) return null;
-    backendUrl = parsedBackendUrl;
+    backendUrl = parseHttpUrl(rawBackendUrl) ?? "";
   } else if (backendLink) {
     backendUrl = backendLink.url;
   }
